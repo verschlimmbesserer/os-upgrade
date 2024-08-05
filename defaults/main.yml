@@ -1,0 +1,6 @@
+---
+
+os_upgrade_update_all_packages: false
+os_upgrade_dist_upgrade: false
+os_upgrade_clean_dependencies: false
+os_upgrade_clean_cache: false

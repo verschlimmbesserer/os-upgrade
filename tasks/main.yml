@@ -1,0 +1,40 @@
+---
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Check for upgradeable
+  ansible.builtin.apt:
+    upgrade: true
+    force_apt_get: true
+  check_mode: true
+  register: upgradeable
+
+- name: Show Upgradeable packages
+  ansible.builtin.debug:
+    msg: "{{ upgradeable.stdout_lines }}"
+
+- name: Update all packages to their latest version
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    only_upgrade: true
+  when: os_upgrade_update_all_packages
+
+- name: Upgrade the OS (apt-get dist-upgrade)
+  ansible.builtin.apt:
+    upgrade: dist
+  when: os_upgrade_dist_upgrade
+
+- name: Remove dependencies that are no longer required and purge their configuration files
+  ansible.builtin.apt:
+    autoremove: true
+    purge: true
+  when: os_upgrade_clean_dependencies
+
+- name: Remove useless packages from the cache
+  ansible.builtin.apt:
+    autoclean: true
+  when: os_upgrade_clean_cache
